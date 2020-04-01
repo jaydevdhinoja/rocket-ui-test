@@ -3,11 +3,20 @@ import { connect } from "react-redux";
 
 import Layout from './Layout';
 import Navigation from '../components/Navigation';
+import ErrorBoundry from './ErrorBoundry';
 
 const menu = Navigation();
 
 function MasterLayoutHOC(WrappedComponent, pageName) {
   class MasterLayoutImpl extends Component {
+
+    state = {
+      error: null
+    }
+
+    componentDidCatch(error, errorInfo) {
+      this.setState({error})
+    }
     render() {
 
       const layoutProps = {
@@ -16,9 +25,11 @@ function MasterLayoutHOC(WrappedComponent, pageName) {
       };
 
       return (
-        <Layout {...layoutProps}>
-          <WrappedComponent {...this.props} />
-        </Layout>
+        <ErrorBoundry>
+          <Layout {...layoutProps}>
+            <WrappedComponent {...this.props} />
+          </Layout>
+        </ErrorBoundry>
       );
     }
   }

@@ -1,12 +1,25 @@
 import React from 'react';
-import { configure, mount } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
+import { render, cleanup } from '@testing-library/react'
+import '@testing-library/jest-dom/extend-expect';
+import { Provider } from 'react-redux'
 import Routes from '../routes';
+import store from '../stores/Root';
 
-configure({ adapter: new Adapter() });
+afterEach(cleanup)
+
+function renderWithRedux(
+  ui,
+  { initialState } = {}
+) {
+  return {
+    ...render(<Provider store={store}>{ui}</Provider>),
+    store,
+  }
+}
 
 describe('app', () => {
-  it('renders without crashing', () => {
-    mount(<Routes />);
+  test('renders without crashing', () => {
+    const { getByText }  = renderWithRedux(<Routes />);
+    expect(getByText('SpaceX', {exact: false})).toBeInTheDocument()
   });
 });
